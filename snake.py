@@ -30,7 +30,7 @@ turtle.setup(SIZE_X, SIZE_Y)
 turtle.penup()
 
 SQUARE_SIZE = 20
-START_LENGTH = 5
+START_LENGTH = 1
 
 pos_list = []
 stamp_list = []
@@ -81,24 +81,26 @@ turtle.onkeypress(right, RIGHT_ARROW)
 turtle.listen()
 
 
+food = turtle.clone()
+food.shape("circle")
+food.hideturtle()
+food_stamps = []
+food_pos = []
 def make_food():
     min_x = -int(SIZE_X/2/SQUARE_SIZE)+1
     max_x = int(SIZE_X/2/SQUARE_SIZE)-1
-    min_y = -int(SIZE_Y/2/SQUARE_SIZE)-1
-    max_y = int(SIZE_Y/2/SQUARE_SIZE)+1
+    min_y = -int(SIZE_Y/2/SQUARE_SIZE)+1
+    max_y = int(SIZE_Y/2/SQUARE_SIZE)-1
 
     food_x = random.randint(min_x,max_x)*SQUARE_SIZE
     food_y = random.randint(min_y,max_y)*SQUARE_SIZE
     
-    food = turtle.clone()
-    food.shape("circle")
-    food_stamps = []
-#    food.hideturtle()
+    pos_food = (food_x, food_y)
     
-    for i in food_pos:
-        food.goto(food_x,food_y)
-        food_id = food.stamp()
-        food_stamps.append(food_id)
+    food.goto(food_x,food_y)
+    food_id = food.stamp()
+    food_stamps.append(food_id)
+    food_pos.append(pos_food)
     
 def move_snake():
     my_pos = snake.pos()
@@ -124,13 +126,17 @@ def move_snake():
     new_stamp = snake.stamp()
     stamp_list.append(new_stamp)
     #########NEEED THIS FOR PART 5!
-    global food_stamps, food_pos
     if snake.pos() in food_pos:
         food_ind = food_pos.index(snake.pos())
         food.clearstamp(food_stamps[food_ind])
+        make_food()
         food_pos.pop(food_ind)
         food_stamps.pop(food_ind)
         print("You have eaten the food!")
+        stamp_list.append(snake.pos())
+
+    
+        
     #PART 8
         
     old_stamp = stamp_list.pop(0)
@@ -153,6 +159,9 @@ def move_snake():
         print("You hit the bottom edge! Game over!")
         quit()
     turtle.ontimer(move_snake, TIME_STEP)
+#    if pos_list[-1] in pos_list[0: -1]:
+    if snake.pos() in pos_list[0:-2]:
+        quit()
 
 
 #food = turtle.clone()
@@ -168,4 +177,4 @@ def move_snake():
 #    food_stamps.append(food_id)
 
 move_snake()
-    
+make_food()
