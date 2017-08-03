@@ -10,7 +10,7 @@ turtle.setup(SIZE_X, SIZE_Y)
 turtle.penup()
 
 SQUARE_SIZE = 20
-START_LENTGH = 2
+START_LENTGH = 1
 
 #lists
 pos_list = []
@@ -107,7 +107,9 @@ def move_snake():
     old_stamp = stamp_list.pop(0)
     snake.clearstamp(old_stamp)
     #check if the snake is in the food position
+    
     if snake.pos() in food_pos:
+        global START_LENTGH
         food_ind = food_pos.index(snake.pos()) #remove eaten food stamps
         food.clearstamp(food_stamps[food_ind])
         food_pos.pop(food_ind)
@@ -120,10 +122,9 @@ def move_snake():
     if snake.pos() in pos_list[0:-2]:
         quit()
     
-    
-        
+    turtle.write(len(stamp_list), move=False, align="left", font=("Arial", 18, "normal"))
     pos_list.pop(0)
-
+    
 
     #Grab position of the snake
     new_pos = snake.pos()
