@@ -116,8 +116,10 @@ def move_snake():
         make_food()
         stamp_list.append(snake1)
         pos_list.append(snake1)
+        
     if snake.pos() in pos_list[0:-2]:
         quit()
+    
     
         
     pos_list.pop(0)
