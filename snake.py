@@ -1,5 +1,8 @@
 import turtle
 import random
+import time
+
+#turtle.bgcolor("black")
 
 turtle.tracer(1,0)
 
@@ -30,7 +33,7 @@ turtle.setup(SIZE_X, SIZE_Y)
 
 turtle.penup()
 
-SQUARE_SIZE = 20
+SQUARE_SIZE = 22
 START_LENGTH = 1
 
 pos_list = []
@@ -38,9 +41,15 @@ stamp_list = []
 food_pos = []
 food_stamps = []
 
+# BORDERS
+border = turtle.clone()
+border.goto(LEFT_EDGE, UP_EDGE)
+border.goto(RIGHT_EDGE, UP_EDGE)
+
+
 snake = turtle.clone()
 snake.shape("square")
-
+snake.color("red")
 turtle.hideturtle()
 
 
@@ -58,22 +67,26 @@ for num in range(START_LENGTH):
     
 def up():
     global direction
-    direction = UP
+    if direction != DOWN:
+        direction = UP
 #    move_snake()
     print("Up Key!")
 def left():
     global direction
-    direction = LEFT
+    if direction != RIGHT:
+        direction = LEFT
 #    move_snake()
     print("Left Key!")
 def down():
     global direction
-    direction = DOWN
+    if direction != UP:
+        direction = DOWN
 #    move_snake()
     print("Down Key")
 def right():    
     global direction
-    direction = RIGHT
+    if direction != LEFT:
+        direction = RIGHT
 #    move_snake()
     print("Right Key")
 
@@ -89,6 +102,7 @@ turtle.listen()
 
 food = turtle.clone()
 food.shape("circle")
+food.color("green")
 food.hideturtle()
 food_stamps = []
 food_pos = []
@@ -140,11 +154,16 @@ def move_snake():
         food_pos.pop(food_ind)
         food_stamps.pop(food_ind)
         print("You have eaten the food!")
-        stamp_list.append(snake.pos())
-        turtle.clear()      
-        turtle.write("score: " + str(score))
+##        stamp_list.append(snake.pos())
+        turtle.clear()
+        turtle.goto(-350, 200)
+        turtle.color("white")
+        turtle.write("score: " + str(score), font = ("Arial", 18,("bold")))
         score += 1
-     
+    else:
+        old_stamp = stamp_list.pop(0)
+        snake.clearstamp(old_stamp)
+        pos_list.pop(0)
         
 
 
@@ -152,15 +171,17 @@ def move_snake():
         
     #PART 8
         
-    old_stamp = stamp_list.pop(0)
-    snake.clearstamp(old_stamp)
-    pos_list.pop(0)
+    
 
     new_pos = snake.pos()
     new_x_pos = new_pos[0]
     new_y_pos = new_pos[1]
     if new_x_pos >= RIGHT_EDGE:
-        print("You hit the right edge! Game over!")
+#        print("You hit the right edge! Game over!")
+        writer = turtle.clone()
+        writer.color("red")
+        writer.write("GAME OVER!", font = ("Arial", 40))
+        time.sleep(2)
         quit()
     elif new_x_pos <= LEFT_EDGE:
         print("You hit the left edge! Game over!")
