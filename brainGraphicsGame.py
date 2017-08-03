@@ -1,3 +1,4 @@
+
 import turtle
 import random
 
@@ -12,14 +13,13 @@ RIGHT_EDGE = 400
 LEFT_EDGE = -400
 
 turtle.setup(SIZE_X, SIZE_Y)
-turtle.bgcolor("black")
+turtle.bgcolor("white")
+turtle.title("Brain Game")
 
 turtle.penup()
 
 SQUARE_SIZE = 20
-START_LENGTH = 10
-
-SPEED = 50
+START_LENGTH = 1
 
 ## Initialize lists
 pos_list = []
@@ -27,18 +27,26 @@ stamp_list = []
 food_pos = []
 food_stamps = []
 
-# Set u positions (x, y) of boxes that make up the snake
-snake = turtle.clone()
-snake.shape("square")
-snake.fillcolor("red")
+enemy_pos_list = []
+enemy_stamps_list = []
 
+# Set u positions (x, y) of boxes that make up the snake
+turtle.shape("square")
+snake = turtle.clone()
+snake.fillcolor("red")
+snake.goto((-SIZE_X / 2) + SQUARE_SIZE * 2, (-SIZE_Y / 2) + SQUARE_SIZE * 2)
+
+enemy = snake.clone()
+enemy.goto((SIZE_X / 2) - SQUARE_SIZE * 2, (SIZE_Y / 2) - SQUARE_SIZE * 2)
+enemy.fillcolor("green")
 #Hide the turtle object (it's an arrow we don't need to see it)
 turtle.hideturtle()
-
 
 ## Draw a snake at the start of the game with a for loop
 ## for loop should use range() and coount up to the number of pieces
 ## in the snake (i.e. START_LENGTH)
+
+
 
 for i in range(START_LENGTH):
     x_pos = snake.pos()[0]
@@ -76,30 +84,89 @@ LEFT = 2
 RIGHT = 3
 
 direction = UP
+directionEnemy = DOWN
+
+def move_enemy():
+    global directionEnemy
+    randNum = random.randint(1, 401)
+    my_pos = enemy.pos()
+    x_pos = my_pos[0]
+    y_pos = my_pos[1]
+
+    ## Right
+    if randNum <= 15:
+        print("RIGHT")
+        directionEnemy = RIGHT
+    ## Left
+    elif randNum <= 50 and randNum > 15:
+        print("LEFT")
+        directionEnemy = LEFT
+    ## Up
+    elif randNum <= 65 and randNum > 50:
+        print("UP")
+        directionEnemy = UP
+    ##Down
+    elif randNum <= 100 and randNum > 65:
+        print("DOWN")
+        directionEnemy = DOWN
+
+    my_pos = enemy.pos()
+    new_x_pos = my_pos[0]
+    new_y_pos = my_pos[1]
+
+    if new_x_pos >= RIGHT_EDGE:
+        directionEnemy = LEFT
+    elif new_x_pos <= LEFT_EDGE:
+        directionEnemy = RIGHT
+    elif new_y_pos >= UP_EDGE:
+        directionEnemy = DOWN
+    elif new_y_pos <= DOWN_EDGE:
+        directionEnemy = UP
+
+    print(my_pos)
+
+    if directionEnemy == RIGHT:
+        enemy.goto(x_pos + SQUARE_SIZE, y_pos)
+    elif directionEnemy == LEFT:
+        enemy.goto(x_pos - SQUARE_SIZE, y_pos)
+    elif directionEnemy == UP:
+        enemy.goto(x_pos, y_pos + SQUARE_SIZE)
+    elif directionEnemy == DOWN:
+        enemy.goto(x_pos, y_pos - SQUARE_SIZE)
+
+    my_pos = enemy.pos()
+    enemy_pos_list.append(my_pos)
+
+    new_stamp = enemy.stamp()
+    enemy_stamps_list.append(new_stamp)
+    ######## SPECIAL PLACE - Remember it for Part 5
+    #pop zeroth element in pos_list to get rid of last the last
+    #piece of the tail
+    old_stamp = enemy_stamps_list.pop(0)
+    enemy.clearstamp(old_stamp)
+    enemy_pos_list.pop(0)
+        
+    turtle.ontimer(move_enemy, TIME_STEP)
 
 def up():
     global direction #snake direction is global (same everywhere)
-    if direction != DOWN:
-        direction = UP #Change direction to up
-        print("You pressed the up key!")
+    direction = UP #Change direction to up
+    print("You pressed the up key!")
 
 def down():
     global direction #snake direction is global (same everywhere)
-    if direction != UP:
-        direction = DOWN #Change direction to up
-        print("You pressed the down key!")
+    direction = DOWN #Change direction to up
+    print("You pressed the down key!")
 
 def left():
     global direction #snake direction is global (same everywhere)
-    if direction != RIGHT:
-        direction = LEFT #Change direction to up
-        print("You pressed the left key!")
+    direction = LEFT #Change direction to up
+    print("You pressed the left key!")
 
 def right():
     global direction #snake direction is global (same everywhere)
-    if direction != LEFT:
-        direction = RIGHT #Change direction to up
-        print("You pressed the right key!")
+    direction = RIGHT #Change direction to up
+    print("You pressed the right key!")
 
 
 #2. Make functions down(), left(), and right() that change direction
@@ -117,19 +184,15 @@ def move_snake():
     
     if direction == RIGHT:
         snake.goto(x_pos + SQUARE_SIZE, y_pos)
-        print("You moved Right!")
 
     elif direction == LEFT:
         snake.goto(x_pos - SQUARE_SIZE, y_pos)
-        print("You moved Left!")
 
     elif direction == DOWN:
         snake.goto(x_pos, y_pos - SQUARE_SIZE)
-        print("You moved Down!")
 
     elif direction == UP:
         snake.goto(x_pos, y_pos + SQUARE_SIZE)
-        print("You moved Up!")
 
     #Stamp new element and append new stamp in list
     #Remember: The snake position changed - update my_pos()
@@ -153,7 +216,7 @@ def move_snake():
     # The next three lines check if the snake is hitting the
     # right edge.
 
-    ######## SPECIAL PLACE - Remember it for Part 5
+     ######## SPECIAL PLACE - Remember it for Part 5
     global food_stamps, food_pos
     #If snake is on top of food item
     if snake.pos() in food_pos:
@@ -178,9 +241,18 @@ def move_snake():
         print("You hit the right edge! Game over!")
         quit()
 
+    if enemy.pos() == snake.pos():
+        quit("hey!")        
+
+    
     turtle.ontimer(move_snake, TIME_STEP)
 
+turtle.goto(-200, -200)
+turtle.write("Brain Game", False, "left", ("helvetica", 18, "normal"))
+
 move_snake()
+move_enemy()
+
 '''
 def make_food():
     #The screen positions go from -SIZE/2 to +SIZE/2
@@ -202,9 +274,6 @@ def make_food():
     foodStamp = food.stamp()
     food_stamps.append(foodStamp)
     ##3.WRITE YOUR CODE HERE: Add the food turtle's stamp to the food stamps list
-
-
-
 turtle.register_shape("trash.gif")
 food = turtle.clone()
 food.shape("trash.gif")
@@ -225,3 +294,4 @@ for this_food_pos in food_pos:
     foodStamp = food.stamp()
     food_stamps.append(foodStamp)
     '''
+
