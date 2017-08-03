@@ -9,7 +9,8 @@ DOWN_ARROW = "Down"
 RIGHT_ARROW = "Right"
 TIME_STEP = 100
 SPACEBAR = "space"
-
+score = 1
+        
 UP = 0
 LEFT = 1
 DOWN = 2
@@ -41,6 +42,8 @@ snake = turtle.clone()
 snake.shape("square")
 
 turtle.hideturtle()
+
+
 
 
 for num in range(START_LENGTH):
@@ -79,6 +82,9 @@ turtle.onkeypress(left, LEFT_ARROW)
 turtle.onkeypress(down, DOWN_ARROW)
 turtle.onkeypress(right, RIGHT_ARROW)
 turtle.listen()
+
+
+
 
 
 food = turtle.clone()
@@ -126,6 +132,7 @@ def move_snake():
     new_stamp = snake.stamp()
     stamp_list.append(new_stamp)
     #########NEEED THIS FOR PART 5!
+    global score
     if snake.pos() in food_pos:
         food_ind = food_pos.index(snake.pos())
         food.clearstamp(food_stamps[food_ind])
@@ -134,6 +141,12 @@ def move_snake():
         food_stamps.pop(food_ind)
         print("You have eaten the food!")
         stamp_list.append(snake.pos())
+        turtle.clear()      
+        turtle.write("score: " + str(score))
+        score += 1
+     
+        
+
 
     
         
@@ -159,8 +172,7 @@ def move_snake():
         print("You hit the bottom edge! Game over!")
         quit()
     turtle.ontimer(move_snake, TIME_STEP)
-#    if pos_list[-1] in pos_list[0: -1]:
-    if snake.pos() in pos_list[0:-2]:
+    if pos_list[-1] in pos_list[0: -1]:
         quit()
 
 
@@ -178,3 +190,4 @@ def move_snake():
 
 move_snake()
 make_food()
+score(0)
