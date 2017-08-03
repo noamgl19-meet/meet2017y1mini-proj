@@ -1,3 +1,4 @@
+
 import turtle
 import random
 #makes the turtle move smoothly
@@ -20,6 +21,7 @@ food_stamps = []
 #set up position
 snake = turtle.clone()
 snake.shape("square")
+snake.fillcolor("red")
 
 #hide the turtle
 turtle.hideturtle()
@@ -113,7 +115,10 @@ def move_snake():
         print("you have eaten the food!")
         make_food()
         stamp_list.append(snake1)
-       
+        pos_list.append(snake1)
+    if snake.pos() in pos_list[0:-2]:
+        quit()
+    
         
     pos_list.pop(0)
 
@@ -152,7 +157,7 @@ food_stamps = []
 #food.goto(food_pos[food_x, food_y])
 #foodstamp = food.stamp()
 #food_stamps.append(foodstamp)
-    
+
 
 #make food randomly
 def make_food():
@@ -175,4 +180,3 @@ def make_food():
 make_food()
 
     
-
