@@ -1,6 +1,7 @@
-
+import time
 import turtle
 import random
+
 #makes the turtle move smoothly
 turtle.tracer(1,0)
 SIZE_X = 800
@@ -20,13 +21,25 @@ pos_list = []
 stamp_list = []
 food_pos = []
 food_stamps = []
-snake_colors = ["white", "red", "black", "green", "grey" , "brown" , "yellow", "orange", "blue", "pink", "salmon",]
+snake_colors = ["white", "red", "green", "grey" , "brown" , "yellow", "orange", "pink", "salmon","purple","olive","skyblue","greenyellow", "lightblue",]
+scores = []
 #set up position
+
 snake = turtle.clone()
 snake.shape("square")
 snake.fillcolor("red")
 
-#hide the turtle
+#making the border
+border = turtle.clone()
+
+border.goto(400,-250)
+border.pendown()
+border.pen(fillcolor="white", pencolor="white", pensize=20)
+border.pencolor("white")
+border.goto(400,250)
+border.goto(-400,250)
+border.goto(-400, -250)
+border.goto(400,-250)
 turtle.hideturtle()
 
 for i in range(START_LENTGH):
@@ -122,11 +135,20 @@ def make_food():
         make_food()
     if food_y < -250:
         make_food()
-       
+    if food_tup in pos_list:
+        food_stamps.pop(-1)
+        food_pos.pop(-1)
+        food_tup = food_stamps(-1)
+        food.clearstamp(food_tup)
+        make_food()
 make_food()
 
     
-
+#reset the game func
+def reset():
+    for i in range (len(stamp_list)):
+        snake.clearstamp(stamp_list[i])
+        stamp_list.pop(i)
 #making the moving function
 def move_snake():
     my_pos = snake.pos()
@@ -136,21 +158,31 @@ def move_snake():
     if direction == RIGHT:
         snake.goto(x_pos + SQUARE_SIZE, y_pos)
         print("you moved to the right!")
+        snake.color(random.choice(snake_colors))
     elif direction == LEFT:
         snake.goto(x_pos - SQUARE_SIZE, y_pos)
         print("you moved to the left!")
+        snake.color(random.choice(snake_colors))
     elif direction == UP:
         snake.goto(x_pos, y_pos + SQUARE_SIZE)
         print("you moved UP")
+        snake.color(random.choice(snake_colors))
     elif direction == DOWN:
         snake.goto(x_pos, y_pos - SQUARE_SIZE)
         print("you moved DOWN")
+        snake.color(random.choice(snake_colors))
     my_pos = snake.pos()
     pos_list.append(my_pos)
     new_stamp = snake.stamp()
     stamp_list.append(new_stamp)
-
+    
     old_stamp = stamp_list.pop(0)
+
+
+
+
+
+    
     snake.clearstamp(old_stamp)
     #check if the snake is in the food position
     
@@ -165,15 +197,23 @@ def move_snake():
         stamp_list.append(snake1)
         pos_list.append(snake1)
         score1 += 1
+        scores.append(score1)
+        scores.sort()
+        score.write("High Score: "+str(scores[-1]), move=False, align="left", font=("Arial", 18, "normal",))
+        
         score.clear()
         score.pencolor("white")
         snake.pencolor("blue")
         score.write("Score: "+str(score1), move=False, align="left", font=("Arial", 18, "normal",))
         snake.fillcolor(random.choice(snake_colors))
         make_food()
-
+    
     if snake.pos() in pos_list[0:-2]:
+        
+     
         quit()
+        
+        
     
 
     
@@ -204,3 +244,4 @@ move_snake()
     #TODO add trash
 
 #turtle.register_shape("circle")
+    
