@@ -1,7 +1,7 @@
 import turtle
 import random
 import time
-
+wuadsjkgbyugasdweydfhucjgqywhasdtgqyuwjeatdghqwtsgdyahsd
 #turtle.bgcolor("black")
 
 turtle.tracer(1,0)
